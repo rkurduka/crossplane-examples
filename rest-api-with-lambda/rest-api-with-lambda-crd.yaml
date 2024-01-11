@@ -1,0 +1,52 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: lambdawithrestapi.aws.com
+spec:
+  group: aws.com
+  names:
+    kind: LambdaWithRestApi 
+    plural: lambdawithrestapi
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              service:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  parameters:
+                    type: array
+                    items:
+                      properties:
+                        location:
+                          type: string
+                          oneOf:
+                            - pattern: '^EU$'
+                            - pattern: '^US$'
+                        runtime:
+                          type: string
+                          oneOf:
+                            - pattern: '^PYTHON$'
+                            - pattern: '^GOLANG$'
+                        path:
+                          type: string
+                        method:
+                          type: string
+                          oneOf:
+                           - pattern: '^GET$'
+                           - pattern: '^POST$'
+                        stage:
+                          type: string
+                      type: object
+    served: true
+    referenceable: true
+  claimNames:
+    kind: LambdaWithRestApiClaim
+    plural: lambdawithrestapiclaim
