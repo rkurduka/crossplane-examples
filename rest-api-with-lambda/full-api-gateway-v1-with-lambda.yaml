@@ -10,7 +10,7 @@ spec:
     publish: true
     region: us-east-1
     runtime: python3.10
-    role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+    role: arn:aws:iam::************:role/lambda-assume-role-for-s3-access
     s3Bucket: myfirstbucketysingcrossplane
     s3Key: my-first-lambda.zip
   providerConfigRef:
@@ -95,7 +95,7 @@ metadata:
 spec:
   forProvider:
     integrationHttpMethod: POST 
-    credentials: arn:aws:iam::735820197821:role/api-gateway-to-allow-invoke-lambda
+    credentials: arn:aws:iam::************:role/api-gateway-to-allow-invoke-lambda
     httpMethodSelector:
       matchLabels:
         testing.upbound.io/name: rest-api-method
