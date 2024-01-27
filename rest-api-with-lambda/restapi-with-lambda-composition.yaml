@@ -40,7 +40,7 @@ spec:
             runtime: "python3.10"
             handler: my_lambda_using_crossplane.lambda_handler
             publish: true
-            role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+            role: arn:aws:iam::************:role/lambda-assume-role-for-s3-access
             s3Bucket: myfirstbucketysingcrossplane
             s3Key: my-first-lambda.zip
           providerConfigRef:
@@ -215,7 +215,7 @@ spec:
           name: integration-lambdawithrestapi
         spec:
           forProvider:
-            #credentials: arn:aws:iam::735820197821:role/api-gateway-to-allow-invoke-lambda
+            #credentials: arn:aws:iam::************:role/api-gateway-to-allow-invoke-lambda
             integrationHttpMethod: "POST"
             httpMethodSelector:
               matchLabels:
