@@ -1,0 +1,348 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: restapi-with-lambda-composition-with-composition
+spec:
+  patchSets:
+    - name: region_patchset
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.service.parameters[0].location"
+          toFieldPath: "spec.forProvider.region"
+          transforms:
+            - type: map
+              map: 
+                EU: "eu-central-1"
+                US: "us-east-1"
+    - name: apply_labels
+      patches:
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: metadata.labels[lambdawithrestapi/name]       
+  resources:
+    - name: function
+      base:
+        apiVersion: lambda.aws.upbound.io/v1beta1
+        kind: Function
+        metadata:
+          name: function-lambdawithrestapi
+          labels:
+            lambdawithrestapi-resource/name: lambda 
+        spec:
+          forProvider:
+            region: "us-east-1"
+            runtime: "python3.10"
+            handler: my_lambda_using_crossplane.lambda_handler
+            publish: true
+            role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+            s3Bucket: myfirstbucketysingcrossplane
+            s3Key: my-first-lambda.zip
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: PatchSet
+          patchSetName: apply_labels
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.service.parameters[0].runtime"
+          toFieldPath: "spec.forProvider.runtime"
+          transforms:
+            - type: map
+              map:
+                PYTHON: "python3.8"
+                GOLANG: "go1.20"
+    - name: lambda_permission
+      base:
+        apiVersion: lambda.aws.upbound.io/v1beta1
+        kind: Permission
+        metadata:
+          name: permission-lambdawithrestapi
+        spec:
+          forProvider:
+            statementId: "AllowExecutionFromAPIGateway-crossplane"
+            action: lambda:InvokeFunction
+            functionNameSelector:
+              matchLabels:          
+            principal: apigateway.amazonaws.com
+            region: "us-east-2"
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: PatchSet
+          patchSetName: apply_labels
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "LambdaPermission-%s-%s"
+          toFieldPath: spec.forProvider.statementId 
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.functionNameSelector.matchLabels[lambdawithrestapi/name]
+    
+    - name: restapi
+      base:
+        apiVersion: apigateway.aws.upbound.io/v1beta1
+        kind: RestAPI
+        metadata:
+          name: restapi-lambdawithrestapi
+        spec:
+          forProvider:
+            name: "restapi-lambdawithrestapi"
+            region: "us-east-1"
+            description: "This is demo rest api for crossplane composition- restapiwithlambda"
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: PatchSet
+          patchSetName: apply_labels
+       
+
+    - name: resource
+      base: 
+        apiVersion: apigateway.aws.upbound.io/v1beta1
+        kind: Resource
+        metadata:
+          name: resource-lambdawithrestapi
+        spec:
+          forProvider:
+            parentIdSelector:
+              matchLabels:
+            pathPart: "mypathhere"
+            region: "us-east-1"
+            restApiIdSelector:
+              matchLabels:
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.parentIdSelector.matchLabels[lambdawithrestapi/name]
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.restApiIdSelector.matchLabels[lambdawithrestapi/name]
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.service.parameters[0].path"
+          toFieldPath: "spec.forProvider.pathPart"
+        - type: PatchSet
+          patchSetName: apply_labels
+   
+
+    - name: method
+      base:
+        apiVersion: apigateway.aws.upbound.io/v1beta1
+        kind: Method
+        metadata:
+          name: method-lambdawithrestapi
+        spec:
+          forProvider:
+            authorization: "NONE"
+            httpMethod: "POST"
+            resourceIdSelector:
+              matchLabels:
+            restApiIdSelector:
+              matchLabels:
+            region: "us-east-1"
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.service.parameters[0].method"
+          toFieldPath: "spec.forProvider.httpMethod"
+        - type: PatchSet
+          patchSetName: apply_labels
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.resourceIdSelector.matchLabels[lambdawithrestapi/name]
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.restApiIdSelector.matchLabels[lambdawithrestapi/name]
+
+
+    - name: integration
+      base:
+        apiVersion: apigateway.aws.upbound.io/v1beta1
+        kind: Integration
+        metadata:
+          name: integration-lambdawithrestapi
+        spec:
+          forProvider:
+            #credentials: arn:aws:iam::735820197821:role/api-gateway-to-allow-invoke-lambda
+            integrationHttpMethod: "POST"
+            httpMethodSelector:
+              matchLabels:
+            resourceIdSelector:
+              matchLabels:
+            restApiIdSelector:
+              matchLabels:
+            region: "us-east-1"
+            type: "AWS_PROXY"
+            uriSelector:
+              matchLabels:
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: PatchSet
+          patchSetName: apply_labels
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.httpMethodSelector.matchLabels[lambdawithrestapi/name]
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.resourceIdSelector.matchLabels[lambdawithrestapi/name]
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.restApiIdSelector.matchLabels[lambdawithrestapi/name]
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.uriSelector.matchLabels[lambdawithrestapi/name]
+        
+
+        
+    - name: deployment
+      base:
+        apiVersion: apigateway.aws.upbound.io/v1beta1
+        kind: Deployment
+        metadata:
+          name: deployment-lambdawithrestapi
+        spec:
+          forProvider:
+            restApiIdSelector:
+              matchLabels:
+            region: "us-east-1"
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: PatchSet
+          patchSetName: apply_labels
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.restApiIdSelector.matchLabels[lambdawithrestapi/name]
+
+    - name: stage
+      base:
+        apiVersion: apigateway.aws.upbound.io/v1beta1
+        kind: Stage
+        metadata:
+          name: stage-lambdawithrestapi
+        spec:
+          forProvider:
+            deploymentIdSelector:
+              matchLabels:
+            restApiIdSelector:
+              matchLabels:
+            region: "us-east-1"
+            stageName: production
+          providerConfigRef:
+            name: aws-provider-config
+      patches:
+        - type: PatchSet
+          patchSetName: region_patchset
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.service.parameters[0].stage"
+          toFieldPath: "spec.forProvider.stageName"
+        - type: PatchSet
+          patchSetName: apply_labels
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.deploymentIdSelector.matchLabels[lambdawithrestapi/name]
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.name
+              - fromFieldPath: spec.service.name
+            strategy: string
+            string:
+              fmt: "lambdawithrestapi-%s-%s"
+          toFieldPath: spec.forProvider.restApiIdSelector.matchLabels[lambdawithrestapi/name]                
+  compositeTypeRef:
+    apiVersion: aws.com/v1alpha1
+    kind: LambdaWithRestApiUsingFunction

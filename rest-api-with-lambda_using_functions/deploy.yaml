@@ -1,0 +1,20 @@
+apiVersion: aws.com/v1alpha1
+kind: LambdaWithRestApiUsingFunction
+metadata:
+  name: app-1
+spec:
+  service:
+    - name: getid
+      parameters:
+      - location: US
+        stage: production
+        runtime: PYTHON
+        path: id
+        method: GET
+    - name: getname
+      parameters:
+      - location: US
+        stage: production
+        runtime: PYTHON
+        path: name
+        method: GET

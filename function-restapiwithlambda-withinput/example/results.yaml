@@ -1,0 +1,486 @@
+---
+apiVersion: aws.com/v1alpha1
+kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+metadata:
+  name: example-xr
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Integration
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdarestapiintegration-getid
+    crossplane.io/external-name: getid
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapiintegration-getid
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: xlambdarestapimethod-getid
+    integrationHttpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-getid
+    restApiId: xrestapi
+    type: AWS_PROXY
+    uri: xlambdafunction-getid
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Method
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xrestapiresource-createusers
+    crossplane.io/external-name: createusers
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapimethod-createusers
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-createusers
+    restApiId: xrestapi
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Method
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xrestapiresource-updateuser
+    crossplane.io/external-name: updateuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapimethod-updateuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-updateuser
+    restApiId: xrestapi
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Integration
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdarestapiintegration-updateuser
+    crossplane.io/external-name: updateuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapiintegration-updateuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: xlambdarestapimethod-updateuser
+    integrationHttpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-updateuser
+    restApiId: xrestapi
+    type: AWS_PROXY
+    uri: xlambdafunction-updateuser
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Integration
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdarestapiintegration-createusers
+    crossplane.io/external-name: createusers
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapiintegration-createusers
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: xlambdarestapimethod-createusers
+    integrationHttpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-createusers
+    restApiId: xrestapi
+    type: AWS_PROXY
+    uri: xlambdafunction-createusers
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Method
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xrestapiresource-getid
+    crossplane.io/external-name: getid
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapimethod-getid
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-getid
+    restApiId: xrestapi
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Permission
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunctionpermission-deleteuser
+    crossplane.io/external-name: deleteuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunctionpermission-deleteuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    action: lambda:InvokeFunction
+    functionName: xlambdafunction-deleteuser
+    principal: apigateway.amazonaws.com
+    region: eu-central-1
+    statementId: AllowFromApiGatewayInvokeLambda
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Stage
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdarestapistage
+    crossplane.io/external-name: MySecondRestAPI
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapistage-MySecondRestAPI
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    deploymentId: xlambdarestapideployment-My Seconds Rest Api Using CrossPlaneFunction
+    region: eu-central-1
+    restApiId: xrestapi
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunction-getid
+    crossplane.io/external-name: getid
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunction-getid
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    handler: my_lambda_using_crossplane.lambda_handler
+    publish: true
+    region: eu-central-1
+    role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+    runtime: python3.8
+    s3Bucket: myfirstbucketysingcrossplane
+    s3Key: my-first-lambda.zip
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Method
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xrestapiresource-deleteuser
+    crossplane.io/external-name: deleteuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapimethod-deleteuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-deleteuser
+    restApiId: xrestapi
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdarestapideployment
+    crossplane.io/external-name: MySecondRestAPI
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapideployment-My Seconds Rest Api Using CrossPlaneFunction
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    description: My Seconds Rest Api Using CrossPlaneFunction
+    region: eu-central-1
+    restApiId: xrestapi
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Permission
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunctionpermission-updateuser
+    crossplane.io/external-name: updateuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunctionpermission-updateuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    action: lambda:InvokeFunction
+    functionName: xlambdafunction-updateuser
+    principal: apigateway.amazonaws.com
+    region: eu-central-1
+    statementId: AllowFromApiGatewayInvokeLambda
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: RestAPI
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xrestapi
+    crossplane.io/external-name: MySecondRestAPI
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xrestapi
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    description: My Seconds Rest Api Using CrossPlaneFunction
+    name: MySecondRestAPI
+    region: eu-central-1
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Permission
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunctionpermission-getid
+    crossplane.io/external-name: getid
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunctionpermission-getid
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    action: lambda:InvokeFunction
+    functionName: xlambdafunction-getid
+    principal: apigateway.amazonaws.com
+    region: eu-central-1
+    statementId: AllowFromApiGatewayInvokeLambda
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunction-createusers
+    crossplane.io/external-name: createusers
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunction-createusers
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    handler: my_lambda_using_crossplane.lambda_handler
+    publish: true
+    region: eu-central-1
+    role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+    runtime: python3.8
+    s3Bucket: myfirstbucketysingcrossplane
+    s3Key: my-first-lambda.zip
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunction-deleteuser
+    crossplane.io/external-name: deleteuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunction-deleteuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    handler: my_lambda_using_crossplane.lambda_handler
+    publish: true
+    region: eu-central-1
+    role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+    runtime: python3.8
+    s3Bucket: myfirstbucketysingcrossplane
+    s3Key: my-first-lambda.zip
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Permission
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunctionpermission-createusers
+    crossplane.io/external-name: createusers
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunctionpermission-createusers
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    action: lambda:InvokeFunction
+    functionName: xlambdafunction-createusers
+    principal: apigateway.amazonaws.com
+    region: eu-central-1
+    statementId: AllowFromApiGatewayInvokeLambda
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdafunction-updateuser
+    crossplane.io/external-name: updateuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdafunction-updateuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    handler: my_lambda_using_crossplane.lambda_handler
+    publish: true
+    region: eu-central-1
+    role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+    runtime: python3.8
+    s3Bucket: myfirstbucketysingcrossplane
+    s3Key: my-first-lambda.zip
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Integration
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: xlambdarestapiintegration-deleteuser
+    crossplane.io/external-name: deleteuser
+  generateName: example-xr-
+  labels:
+    crossplane.io/composite: example-xr
+  name: xlambdarestapiintegration-deleteuser
+  ownerReferences:
+  - apiVersion: aws.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+    name: example-xr
+    uid: ""
+spec:
+  forProvider:
+    httpMethod: xlambdarestapimethod-deleteuser
+    integrationHttpMethod: POST
+    region: eu-central-1
+    resourceId: xlambdarestapiresource-deleteuser
+    restApiId: xrestapi
+    type: AWS_PROXY
+    uri: xlambdafunction-deleteuser

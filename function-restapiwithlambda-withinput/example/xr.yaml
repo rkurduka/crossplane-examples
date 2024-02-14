@@ -1,0 +1,30 @@
+# Replace this with your XR!
+apiVersion: aws.com/v1alpha1
+kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+metadata:
+  name: example-xr
+spec:
+  services:
+  - name: getid
+    path: /getid
+    method: GET
+    runtime: PYTHON
+  - name: createusers
+    path: /createuser
+    method: POST
+    runtime: PYTHON
+  - name: deleteuser
+    path: /deleteuser
+    method: POST
+    runtime: PYTHON
+  - name: updateuser
+    path: /updateuser
+    method: POST
+    runtime: PYTHON
+ 
+
+
+      
+
+   
+

@@ -1,0 +1,149 @@
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Function
+metadata:
+  labels:
+    testing.upbound.io/name: my-first-lambda
+  name: example-lambda
+spec:
+  forProvider:
+    handler: my_lambda_using_crossplane.lambda_handler
+    publish: true
+    region: us-east-1
+    runtime: python3.10
+    role: arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access
+    s3Bucket: myfirstbucketysingcrossplane
+    s3Key: my-first-lambda.zip
+  providerConfigRef:
+    name: aws-provider-config
+---
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Permission
+metadata:
+ annotations:
+   testing.upbound.io/name: my-lambda-permission
+ name: lambda-permission-to-allow-from-apigateway
+spec:
+ forProvider:
+   action: lambda:InvokeFunction
+   functionNameRef:
+     name: example-lambda
+   principal: apigateway.amazonaws.com
+   region: us-east-1
+   statementId: AllowExecutionFromApigateway
+ providerConfigRef:
+   name: aws-provider-config
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: RestAPI
+metadata:
+  labels:
+    testing.upbound.io/name: restapi
+  name: myfirstapi
+spec:
+  forProvider:
+    description: This is my API for demonstration purposes
+    name: MyFirstAPI
+    region: us-east-1
+  providerConfigRef:
+    name: aws-provider-config
+---  
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Resource
+metadata:
+  labels:
+    testing.upbound.io/name: restapi-resource
+  name: my-first-api-resource
+spec:
+  forProvider:
+    parentIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi
+    pathPart: myregion
+    region: us-east-1
+    restApiIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi
+  providerConfigRef:
+    name: aws-provider-config
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Method
+metadata:
+  labels:
+    testing.upbound.io/name: rest-api-method
+  name: myfirstmethod
+spec:
+  forProvider:
+    authorization: NONE
+    httpMethod: GET
+    region: us-east-1
+    resourceIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi-resource
+    restApiIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi
+  providerConfigRef:
+    name: aws-provider-config
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Integration
+metadata:
+  labels:
+    testing.upbound.io/name: integration
+  name: myfirstintegration
+spec:
+  forProvider:
+    integrationHttpMethod: POST 
+    credentials: arn:aws:iam::735820197821:role/api-gateway-to-allow-invoke-lambda
+    httpMethodSelector:
+      matchLabels:
+        testing.upbound.io/name: rest-api-method
+    region: us-east-1
+    resourceIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi-resource
+    restApiIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi
+    type: AWS_PROXY
+    uriSelector:
+      matchLabels:
+        testing.upbound.io/name: my-first-lambda 
+  providerConfigRef:
+    name: aws-provider-config
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    testing.upbound.io/name: stage-deployment
+  name: myfirstdeployment
+spec:
+  forProvider:
+    region: us-east-1
+    restApiIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi
+  providerConfigRef:
+     name: aws-provider-config  
+---
+apiVersion: apigateway.aws.upbound.io/v1beta1
+kind: Stage 
+metadata:
+  labels:
+    testing.upbound.io/name: stage
+  name: production
+spec:
+  forProvider:
+    deploymentIdSelector:
+      matchLabels:
+        testing.upbound.io/name: stage-deployment
+    region: us-east-1
+    restApiIdSelector:
+      matchLabels:
+        testing.upbound.io/name: restapi
+    stageName: production
+  providerConfigRef:
+    name: aws-provider-config
+

@@ -1,0 +1,19 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: function-restapiwithlambda
+spec:
+  compositeTypeRef:
+    apiVersion: aws.com/v1alpha1
+    kind: LAMBDAWITHRESTAPIUSINGFUNCTION
+  mode: Pipeline
+  pipeline:
+  - step: run-the-template
+    functionRef:
+      name: function-restapiwithlambda
+    input:
+      apiVersion: restapiwithlambdafunctioninput.fn.crossplane.io/v1beta1
+      kind: Input
+      name: "MySecondRestAPI"
+      description: "My Seconds Rest Api Using CrossPlaneFunction"
+      region: "eu-central-1"

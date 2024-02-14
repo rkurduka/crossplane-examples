@@ -1,0 +1,51 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: lambdawithrestapiusingfunction.aws.com
+spec:
+  group: aws.com
+  names:
+    kind: LambdaWithRestApiUsingFunction
+    plural: lambdawithrestapiusingfunction
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              service:
+                type: array
+                items:
+                  properties:
+                    name:
+                      type: string
+                    location:
+                      type: string
+                      oneOf:
+                        - pattern: '^EU$'
+                        - pattern: '^US$'
+                    runtime:
+                      type: string
+                      oneOf:
+                        - pattern: '^PYTHON$'
+                        - pattern: '^GOLANG$'
+                    path:
+                      type: string
+                    method:
+                      type: string
+                    oneOf:
+                      - pattern: '^GET$'
+                      - pattern: '^POST$'
+                    stage:
+                      type: string              
+                  type: object
+            type: object
+
+    served: true
+    referenceable: true
+  claimNames:
+    kind: LambdaWithRestApiUsingFunctionClaim
+    plural: lambdawithrestapiusingfunctionclaim
