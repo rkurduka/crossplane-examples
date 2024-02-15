@@ -206,7 +206,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 
 		handler := "my_lambda_using_crossplane.lambda_handler"
 		publish := true
-		role := "arn:aws:iam::735820197821:role/lambda-assume-role-for-s3-access"
+		role := "arn:aws:iam::************:role/lambda-assume-role-for-s3-access"
 		s3Bucket := "myfirstbucketysingcrossplane"
 		s3Key := "my-first-lambda.zip"
 
